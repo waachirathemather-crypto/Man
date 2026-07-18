@@ -169,5 +169,36 @@ Error generating stack: `+c.message+`
   </head>
   <body>
     <div id="root"></div>
-  </body>
+  <script>
+(() => {
+  const map = {"PRIVATE COMPUTER VISION":"ระบบมองเห็นด้วยคอมพิวเตอร์แบบส่วนตัว","Landmarks":"จุดกำกับมือ","Mirror":"ภาพสะท้อน","Start camera":"เริ่มกล้อง","Live recognition":"การตรวจจับแบบเรียลไทม์","Your camera stays in this browser.":"ภาพจากกล้องจะอยู่ในเบราว์เซอร์นี้เท่านั้น","Camera off":"กล้องปิดอยู่","Ready when you are":"พร้อมเมื่อคุณพร้อม","Start the camera to see live hand landmarks and recognized gestures.":"เริ่มกล้องเพื่อดูจุดกำกับมือและท่ามือที่ตรวจพบแบบเรียลไทม์","FRAME RATE":"อัตราเฟรม","LATENCY":"ความหน่วง","HANDS":"จำนวนมือ","Frames are processed locally; nothing is uploaded by this app.":"เฟรมทั้งหมดประมวลผลในอุปกรณ์นี้ ไม่มีการอัปโหลดภาพโดยแอป","Current action":"คำสั่งล่าสุด","Triggered after a confident detection":"ทำงานเมื่อระบบตรวจพบท่าด้วยความมั่นใจเพียงพอ","Waiting for a gesture":"กำลังรอท่ามือ","Gestures must score at least 65% before an action or history event is emitted.":"ท่ามือต้องมีความมั่นใจอย่างน้อย 65% จึงจะสั่งงานหรือบันทึกในประวัติ","Tip:":"เคล็ดลับ:","Keep your hand inside the camera frame with even lighting for the most reliable landmarks.":"วางมือให้อยู่ในกรอบกล้องและมีแสงสม่ำเสมอ เพื่อให้ระบบเห็นจุดกำกับมือได้แม่นยำขึ้น","Recognition history":"ประวัติการตรวจจับ","Recent local events":"เหตุการณ์ล่าสุดในอุปกรณ์นี้","Clear":"ล้าง","No gestures yet":"ยังไม่พบท่ามือ","Recognitions will appear here.":"ผลการตรวจจับจะแสดงที่นี่","Gesture actions":"การทำงานตามท่ามือ","Local, browser-safe shortcuts with a 1.25 second cooldown":"คำสั่งปลอดภัยในเบราว์เซอร์ พร้อมเวลาพัก 1.25 วินาที","Supported gestures":"ท่ามือที่รองรับ","Included in the default MediaPipe model":"มาพร้อมกับโมเดลมาตรฐานของ MediaPipe","Thumb up":"ยกนิ้วโป้ง","Thumb down":"คว่ำนิ้วโป้ง","Victory":"สัญลักษณ์ชัยชนะ","Point up":"ชี้ขึ้น","Closed fist":"กำปั้น","Open palm":"แบมือ","I love you":"ฉันรักคุณ","No action":"ไม่ทำงาน","Save snapshot":"บันทึกภาพ","Toggle landmarks":"สลับจุดกำกับมือ","Toggle mirror":"สลับภาพสะท้อน","Clear history":"ล้างประวัติ","Copy gesture name":"คัดลอกชื่อท่า","Focus camera":"ไปที่กล้อง","Pause detection":"พักการตรวจจับ","Show a hand to the camera":"ยกมือให้กล้องเห็น","Paused":"พักการตรวจจับ","LIVE":"กำลังใช้งาน","Try again":"ลองอีกครั้ง","Loading recognition model":"กำลังโหลดโมเดลตรวจจับ","Opening camera":"กำลังเปิดกล้อง","Detecting gestures":"กำลังตรวจจับท่ามือ","Camera needs attention":"กล้องต้องการการตรวจสอบ","We couldn’t start the camera":"ไม่สามารถเริ่มกล้องได้","Frame rate":"อัตราเฟรม","Latency":"ความหน่วง","Hands":"จำนวนมือ"};
+  const replace = value => {
+    const trimmed = value.trim();
+    if (!map[trimmed]) return value;
+    return value.replace(trimmed, map[trimmed]);
+  };
+  const translate = root => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.parentElement && !["SCRIPT", "STYLE"].includes(node.parentElement.tagName)) {
+        const next = replace(node.nodeValue);
+        if (next !== node.nodeValue) node.nodeValue = next;
+      }
+    }
+    root.querySelectorAll?.("[aria-label],[title]").forEach(element => {
+      ["aria-label", "title"].forEach(attribute => {
+        const value = element.getAttribute(attribute);
+        if (value && map[value]) element.setAttribute(attribute, map[value]);
+      });
+    });
+  };
+  translate(document.body);
+  new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(node => {
+    if (node.nodeType === Node.ELEMENT_NODE) translate(node);
+    if (node.nodeType === Node.TEXT_NODE && node.parentElement) translate(node.parentElement);
+  }))).observe(document.body, { childList: true, subtree: true });
+})();
+<\/script>
+</body>
 </html>
